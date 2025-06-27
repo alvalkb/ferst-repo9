@@ -1,0 +1,58 @@
+Test_CSV
+
+import csv
+import pytest
+a = 1
+# Создаем фикстуру для генерации тестового CSV файла
+@pytest.fixture
+def test_csv_file(tmp_path):
+    """
+    Создает временный CSV файл для тестов.
+
+    :param tmp_path: Фикстура pytest для временных путей.
+    :return: Путь к созданному CSV файлу.
+"name","brand","price","rating"
+"iphone 15 pro","apple","999","4.9"
+"galaxy s23 ultra","samsung","1199","4.8"
+"redmi note 12","xiaomi","199","4.6"
+"poco x5 pro","xiaomi","299","4.4"
+
+    """
+    file_path = tmp_path / "test.csv"
+    with open(file_path, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["name","brand","price","rating"])
+        writer.writerow(["iphone 15 pro","apple","999","4.9"])
+        writer.writerow(["galaxy s23 ultra","samsung","1199","4.8"])
+        writer.writerow(["redmi note 12","xiaomi","199","4.6"])
+        writer.writerow(["poco x5 pro","xiaomi","299","4.5"])
+    return file_path
+
+# Функция для чтения данных из CSV файла
+def read_csv_data(file_path):
+    """
+    Читает данные из CSV файла.
+
+    :param file_path: Путь к CSV файлу.
+    :return: Список строк из CSV файла.
+    """
+    data = []
+    with open(file_path, "r") as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            data.append(row)
+    return data
+
+# Тест, проверяющий чтение данных из CSV файла
+def test_read_csv(test_csv_file):
+    """
+    Тест для функции чтения CSV.
+    """
+    expected_data = [["name","brand","price","rating"],
+                     ["iphone 15 pro","apple","999","4.9"],
+                     ["galaxy s23 ultra","samsung","1199","4.8"],
+                     ["redmi note 12","xiaomi","199","4.6"],
+                     ["poco x5 pro","xiaomi","299","4.4"]]
+    actual_data = read_csv_data(test_csv_file)
+    assert actual_data == expected_data
+
